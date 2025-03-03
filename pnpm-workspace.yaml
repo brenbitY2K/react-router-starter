@@ -1,0 +1,5 @@
+packages:
+  - 'packages/www/apps/*'
+  - 'packages/database'
+  - 'packages/www/packages/*'
+  - 'packages/www/packages/configs/*'

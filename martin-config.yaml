@@ -1,0 +1,18 @@
+cache_size_mb: 2048
+listen_addresses: 0.0.0.0:6767
+worker_processes: 4
+preferred_encoding: gzip
+web_ui: disable
+postgres:
+  connection_string: postgresql://postgres:admin@postgres:5432/acme_docker
+  functions:
+    dynamic_mvt_tiles:
+      schema: public
+      function: dynamic_mvt_tiles
+  default_srid: 4326
+  pool_size: 12
+  max_feature_count: 1000
+  auto_bounds: skip
+  keep_alive: true
+  pool_mode: transaction
+  statement_timeout: 30000
