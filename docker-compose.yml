@@ -1,0 +1,85 @@
+services:
+  business-dashboard:
+    container_name: acme-business-dashboard
+    build:
+      context: .
+      dockerfile: ./packages/www/apps/business-dashboard/other/Dockerfile
+      target: development
+    platform: linux/amd64
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - app_network
+    env_file:
+      - ./packages/www/apps/business-dashboard/.env
+    environment:
+      DATABASE_URL: postgres://postgres:admin@postgres:5432/acme_docker
+    develop:
+      watch:
+        - action: sync
+          path: ./packages/www/apps/business-dashboard
+          target: /app/apps/business-dashboard
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./packages/www/apps/business-dashboard/package.json
+        - action: rebuild
+          path: ./packages/www/apps/business-dashboard/Dockerfile
+        - action: rebuild
+          path: packages
+
+  postgres:
+    container_name: acme-postgres
+    build:
+      context: .
+      dockerfile: ./packages/database/Dockerfile
+    restart: always
+    environment:
+      POSTGRES_DB: acme_docker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      # Add these PostgreSQL settings
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    command: >
+      postgres 
+      -c shared_buffers=1GB
+      -c effective_cache_size=4GB
+      -c maintenance_work_mem=256MB
+      -c work_mem=32MB
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c max_parallel_workers=4
+      -c max_parallel_workers_per_gather=2
+      -c max_worker_processes=4
+      -c max_connections=50
+    ports:
+      - "5434:5432"
+    volumes:
+      - acme_postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_network
+    # Add resource constraints
+    shm_size: "1gb"
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+        reservations:
+          memory: 2G
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -p 5432 -d acme_docker -h localhost",
+        ]
+      interval: 1s
+      timeout: 1s
+      retries: 20
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  acme_postgres_data:

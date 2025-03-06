@@ -1,0 +1,5 @@
+/build
+/server-build
+vite.config.ts.timestamp-*
+
+.react-router/

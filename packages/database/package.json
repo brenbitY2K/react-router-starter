@@ -1,0 +1,44 @@
+{
+  "name": "@acme/database",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema": {
+      "types": "./src/schema/index.ts",
+      "import": "./dist/schema/index.js"
+    },
+    "./utils": {
+      "types": "./src/utils/index.ts",
+      "import": "./dist/utils/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "tsc && eslint .",
+    "build": "node esbuild.config.js",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:seed": "tsx ./src/seed/seed.ts"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@types/pg": "^8.11.6",
+    "@www/eslint-config": "workspace:*",
+    "dotenv": "^16.4.5",
+    "drizzle-kit": "^0.30.4",
+    "drizzle-orm": "^0.39.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-unicorn": "^53.0.0",
+    "tsx": "^4.11.0"
+  },
+  "dependencies": {
+    "esbuild": "^0.21.3",
+    "postgres": "^3.4.4"
+  },
+  "peerDependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "typescript": "^5.4.5"
+  }
+}
